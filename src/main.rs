@@ -32,13 +32,15 @@ pub mod game {
 
         pub fn init(&mut self) -> Result<(), &str> {
             for _ in 0..10 {
-                self.refresh_screen();
+                self.next_instance();
                 sleep(Duration::from_secs(1));
             }
             Ok(())
         }
 
-        fn refresh_screen(&mut self) {
+
+        // pasas una copia, y ajustas los resultados en abse a esa copia, no en base a la referencia q ya se modificó
+        fn next_instance(&mut self) -> Game {
             println!("{self}");
             for col in 0..self.cells.len() {
                 for row in 0..self.cells[col].len() {
@@ -52,13 +54,17 @@ pub mod game {
 
         fn check_neighbors(&mut self, col: usize, row: usize) -> u32 {
             let mut neighbors = 0;
+
             for i in -1..=1 {
                 for j in -1..=1 {
+                    if i == 0 && j == 0 {
+                        continue
+                    }
                     let offset_col = (col as isize + i) as usize;
                     let offset_row = (row as isize + j) as usize;
                     if self.cells.get(offset_col).is_none() {
-                        continue
-                        //break
+                        // continue
+                        break
                     }
                     if self.cells.get(offset_row).is_none() {
                         continue
@@ -66,6 +72,10 @@ pub mod game {
 
                     if self.cells[offset_col][offset_row] == 0 {
                         self.cells[offset_col][offset_row] = self.dead_check_neighbors(offset_col, offset_row);
+                        // if self.cells[offset_col][offset_row] == 1 {
+                        //     // neighbors += 1;V
+                        //     continue
+                        // }
                         continue
                     }
                     neighbors += 1;
