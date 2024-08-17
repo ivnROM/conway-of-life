@@ -4,7 +4,7 @@ use std::fmt::Display;
 
 const SIZE: usize = 12; 
 const ITERATIONS: u8 = 20;
-const SEC_PER_ITER: u64 = 0;
+const SEC_PER_ITER: u64 = 1;
 const WHITE: &str = "\x1b[47m";  // fondo blanco
 const BLACK: &str = "\x1b[40m";  // fondo negro
 const RESET: &str = "\x1b[0m";   // resetear color
