@@ -4,6 +4,7 @@ use std::fmt::Display;
 
 const SIZE: usize = 12; 
 const ITERATIONS: u8 = 20;
+const SEC_PER_ITER: u64 = 0;
 const WHITE: &str = "\x1b[47m";  // fondo blanco
 const BLACK: &str = "\x1b[40m";  // fondo negro
 const RESET: &str = "\x1b[0m";   // resetear color
@@ -45,7 +46,7 @@ impl Game {
     pub fn init(&mut self) -> Result<(), &str> {
         for _ in 0..ITERATIONS {
             self.cells = self.next_instance();
-            sleep(Duration::from_secs(1));
+            sleep(Duration::from_secs(SEC_PER_ITER));
         }
         Ok(())
     }
