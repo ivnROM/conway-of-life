@@ -4,9 +4,10 @@ pub mod game {
     use std::thread::sleep;
     use std::time::Duration;
     use std::fmt::Display;
+    const SIZE: usize = 6; 
 
     pub struct Game {
-        pub cells: [[u32; 6]; 6] 
+        pub cells: [[u32; SIZE]; SIZE] 
     }
 
     impl Display for Game {
@@ -24,7 +25,7 @@ pub mod game {
 
     impl Game {
         fn default() -> Self {
-            let arr = [[0; 6]; 6];
+            let arr = [[0; SIZE]; SIZE];
             Game {
                 cells: arr,
             }
@@ -32,7 +33,7 @@ pub mod game {
 
         pub fn init(&mut self) -> Result<(), &str> {
             for _ in 0..10 {
-                self.next_instance();
+                self.cells = self.next_instance().cells;
                 sleep(Duration::from_secs(1));
             }
             Ok(())
@@ -42,19 +43,22 @@ pub mod game {
         // pasas una copia, y ajustas los resultados en abse a esa copia, no en base a la referencia q ya se modificó
         fn next_instance(&mut self) -> Game {
             println!("{self}");
+            let mut next_arr = [[0; SIZE]; SIZE];
             for col in 0..self.cells.len() {
                 for row in 0..self.cells[col].len() {
                     if self.cells[col][row] != 1 {
                         continue
                     }
-                    self.cells[col][row] = self.check_neighbors(col, row);
+                    next_arr[col][row] = self.check_neighbors(&mut next_arr, col, row);
                 }
+            }
+            Game {
+               cells: next_arr,
             }
         }
 
-        fn check_neighbors(&mut self, col: usize, row: usize) -> u32 {
+        fn check_neighbors(&mut self, next_arr: &mut [[u32; SIZE]; SIZE], col: usize, row: usize) -> u32 {
             let mut neighbors = 0;
-
             for i in -1..=1 {
                 for j in -1..=1 {
                     if i == 0 && j == 0 {
@@ -71,7 +75,7 @@ pub mod game {
                     }
 
                     if self.cells[offset_col][offset_row] == 0 {
-                        self.cells[offset_col][offset_row] = self.dead_check_neighbors(offset_col, offset_row);
+                        next_arr[offset_col][offset_row] = self.dead_check_neighbors(next_arr, offset_col, offset_row);
                         // if self.cells[offset_col][offset_row] == 1 {
                         //     // neighbors += 1;V
                         //     continue
@@ -84,18 +88,18 @@ pub mod game {
 
             match neighbors {
                 0 | 1 => {
-                    return 0
+                    0
                 }
                 4.. => {
-                    return 0
+                    0
                 }
                 _ => {
-                    return 1
+                    1
                 }
             }
         }
 
-        fn dead_check_neighbors(&mut self, col: usize, row: usize) -> u32 {
+        fn dead_check_neighbors(&mut self, next_arr: &mut [[u32; SIZE]; SIZE], col: usize, row: usize) -> u32 {
             let mut neighbors = 0;
             for i in -1..=1 {
                 for j in -1..=1 {
@@ -128,11 +132,11 @@ fn main() {
     use game::Game;
     let mut game = Game {
         cells: [
-                    [0, 1, 0, 0, 0, 0],
-                    [0, 1, 1, 0, 1, 0],
-                    [0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0],
-                    [0, 1, 0, 1, 0, 0],
+                    [0, 1, 1, 1, 0, 0],
+                    [0, 0, 1, 1, 1, 0],
+                    [0, 0, 0, 1, 1, 1],
+                    [0, 0, 1, 1, 1, 0],
+                    [0, 1, 1, 1, 0, 0],
                     [0, 0, 0, 0, 0, 0]
                ]
     };
