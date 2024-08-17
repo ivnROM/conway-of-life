@@ -118,6 +118,7 @@ impl Game {
                     //continue
                     break
                 }
+                // fijarse si esto puedo reducirlo a un simple if con OR logico
                 if self.cells.get(offset_row).is_none() {
                     continue
                 }
