@@ -1,6 +1,32 @@
+#![allow(unused_imports)]
 use std::thread::sleep;
 use std::time::Duration;
 use std::fmt::Display;
+
+mod terminal {
+    use std::io::{Error, stdout};
+    use crossterm::{queue, Command};
+    use crossterm::cursor::{MoveTo, Hide, Show};
+    use crossterm::style::Print;
+
+    struct Position {
+         x: u16,
+         y: u16,
+    }
+
+    fn queue_command<C: Command>(command: C) -> Result<(), Error> {
+        queue!(stdout(), command)
+    }
+
+    fn move_cursor_to(pos: Position) -> Result<(), Error> {
+        let Position{x, y} = pos;
+        queue_command(MoveTo(x, y))
+    }
+
+    fn print_stdout(msg: &str) -> Result<(), Error> {
+        queue_command(Print(msg))
+    }
+}
 
 const SIZE: usize = 12; 
 const ITERATIONS: u8 = 20;
