@@ -1,36 +1,11 @@
-#![allow(unused_imports)]
+#![allow(unused_imports, dead_code)]
 use std::thread::sleep;
 use std::time::Duration;
 use std::fmt::Display;
 
-mod terminal {
-    use std::io::{Error, stdout};
-    use crossterm::{queue, Command};
-    use crossterm::cursor::{MoveTo, Hide, Show};
-    use crossterm::style::Print;
-
-    struct Position {
-         x: u16,
-         y: u16,
-    }
-
-    fn queue_command<C: Command>(command: C) -> Result<(), Error> {
-        queue!(stdout(), command)
-    }
-
-    fn move_cursor_to(pos: Position) -> Result<(), Error> {
-        let Position{x, y} = pos;
-        queue_command(MoveTo(x, y))
-    }
-
-    fn print_stdout(msg: &str) -> Result<(), Error> {
-        queue_command(Print(msg))
-    }
-}
-
 const SIZE: usize = 12; 
-const ITERATIONS: u8 = 20;
-const SEC_PER_ITER: u64 = 1;
+const ITERATIONS: u32 = 2000;
+const SEC_PER_ITER: f64 = 0.1;
 const WHITE: &str = "\x1b[47m";  // fondo blanco
 const BLACK: &str = "\x1b[40m";  // fondo negro
 const RESET: &str = "\x1b[0m";   // resetear color
@@ -62,23 +37,16 @@ impl Display for Game {
 }
 
 impl Game {
-    //fn default() -> Self {
-    //    let arr = [[0; SIZE]; SIZE];
-    //    Game {
-    //        cells: arr,
-    //    }
-    //}
 
     pub fn init(&mut self) -> Result<(), &str> {
         for _ in 0..ITERATIONS {
             self.cells = self.next_instance();
-            sleep(Duration::from_secs(SEC_PER_ITER));
+            sleep(Duration::from_secs_f64(SEC_PER_ITER));
         }
         Ok(())
     }
 
 
-    // pasas una copia, y ajustas los resultados en abse a esa copia, no en base a la referencia q ya se modificó
     fn next_instance(&mut self) -> [[u32; SIZE]; SIZE] {
         println!("{self}");
         let mut next_arr = [[0; SIZE]; SIZE];
@@ -112,10 +80,6 @@ impl Game {
 
                 if self.cells[offset_col][offset_row] == 0 {
                     next_arr[offset_col][offset_row] = self.dead_check_neighbors(offset_col, offset_row);
-                    // if self.cells[offset_col][offset_row] == 1 {
-                    //     // neighbors += 1;V
-                    //     continue
-                    // }
                     continue
                 }
                 neighbors += 1;
@@ -145,7 +109,6 @@ impl Game {
                     //continue
                     break
                 }
-                // fijarse si esto puedo reducirlo a un simple if con OR logico
                 if self.cells.get(offset_row).is_none() {
                     continue
                 }
@@ -166,3 +129,28 @@ impl Game {
 fn get_colored(color: &str, text: &str) -> String {
     format!("{} {} {}", color, text, RESET)
 }
+
+//    use std::io::{Error, stdout};
+//    use crossterm::{queue, Command};
+//    use crossterm::cursor::{MoveTo, Hide, Show};
+//    use crossterm::style::Print;
+//
+//    struct Position {
+//         x: u16,
+//         y: u16,
+//    }
+//
+//    fn queue_command<C: Command>(command: C) -> Result<(), Error> {
+//        queue!(stdout(), command)
+//    }
+//
+//    fn move_cursor_to(pos: Position) -> Result<(), Error> {
+//        let Position{x, y} = pos;
+//        queue_command(MoveTo(x, y))
+//    }
+//
+//    fn print_stdout(msg: &str) -> Result<(), Error> {
+//        queue_command(Print(msg))
+//    }
+//}
+//mod terminal {
