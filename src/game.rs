@@ -1,4 +1,3 @@
-#![allow(unused_imports, dead_code)]
 use std::thread::sleep;
 use std::time::Duration;
 use std::fmt::Display;
@@ -28,7 +27,6 @@ impl Display for Game {
                     }
                     _ => unreachable!()
                 }
-                //display.push(char::from_digit(self.cells[col][row], 2).expect("Error con el numero pasado"));
             }
             display.push('\n')
         }
@@ -48,6 +46,7 @@ impl Game {
 
 
     fn next_instance(&mut self) -> [[u32; SIZE]; SIZE] {
+        clear_screen();
         println!("{self}");
         let mut next_arr = [[0; SIZE]; SIZE];
         for col in 0..self.cells.len() {
@@ -130,27 +129,7 @@ fn get_colored(color: &str, text: &str) -> String {
     format!("{} {} {}", color, text, RESET)
 }
 
-//    use std::io::{Error, stdout};
-//    use crossterm::{queue, Command};
-//    use crossterm::cursor::{MoveTo, Hide, Show};
-//    use crossterm::style::Print;
-//
-//    struct Position {
-//         x: u16,
-//         y: u16,
-//    }
-//
-//    fn queue_command<C: Command>(command: C) -> Result<(), Error> {
-//        queue!(stdout(), command)
-//    }
-//
-//    fn move_cursor_to(pos: Position) -> Result<(), Error> {
-//        let Position{x, y} = pos;
-//        queue_command(MoveTo(x, y))
-//    }
-//
-//    fn print_stdout(msg: &str) -> Result<(), Error> {
-//        queue_command(Print(msg))
-//    }
-//}
-//mod terminal {
+fn clear_screen() {
+    print!("{}[2J", 27 as char);
+    print!("{esc}[2J{esc}[1;1H", esc = 27 as char);
+}
